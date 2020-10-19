@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
@@ -14,8 +15,24 @@ public class Rocket : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("Ok"); //todo remove this line
+                break;            
+            case "Fuel":
+                print("Fuel"); //todo remove this line
+                break;
+            default:
+                print("Dead");
+                //todo kill player
+                break;
+        }
+    }
 
+    // Update is called once per frame
     void Update()
     {
         Thrust();

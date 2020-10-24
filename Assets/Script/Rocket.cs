@@ -16,7 +16,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] private ParticleSystem deathParticles;
     [SerializeField] private ParticleSystem successParticles;
     
-    private static int _sceneIndex;
+    private static int _levelIndex = 3;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     private readonly float _myVolumeLevel = 1.0f;
@@ -73,18 +73,17 @@ public class Rocket : MonoBehaviour
         _audioSource.Stop();
         _audioSource.PlayOneShot(deathSound, _myVolumeLevel);
         deathParticles.Play();
-        Invoke(nameof(LoadFirstLevel), 2f); // parametrize time
+        Invoke(nameof(ReLoadLevel), 2f); // parametrize time
     }
 
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(++_sceneIndex);
+        SceneManager.LoadScene(++_levelIndex);
     }
 
-    private void LoadFirstLevel()
+    private void ReLoadLevel()
     {
-        _sceneIndex = 0;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(_levelIndex);
     }
 
     // Update is called once per frame

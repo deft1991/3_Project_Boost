@@ -4,15 +4,22 @@ using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
+    [SerializeField] float rcsThrust = 100f;
+    [SerializeField] private float thrustThisFrame = 10f;
+    
+    [SerializeField] private AudioClip mainEngineSound;
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioClip levelCompleteSound;    
+    
+    [SerializeField] private ParticleSystem leftJetParticle;
+    [SerializeField] private ParticleSystem rightJetParticle;
+    [SerializeField] private ParticleSystem deathParticles;
+    [SerializeField] private ParticleSystem successParticles;
+    
     private static int _sceneIndex;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
-    [SerializeField] float rcsThrust = 100f;
-    [SerializeField] private float thrustThisFrame = 10f;
-    [SerializeField] private AudioClip mainEngineSound;
-    [SerializeField] private AudioClip deathSound;
-    [SerializeField] private AudioClip levelCompleteSound;
-    private float myVolume = 1.0f;
+    private readonly float _myVolumeLevel = 1.0f;
 
     private enum State
     {
@@ -51,20 +58,22 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void StartDeathSequence()
-    {
-        _state = State.Died;
-        _audioSource.Stop();
-        _audioSource.PlayOneShot(deathSound, myVolume);
-        Invoke(nameof(LoadFirstLevel), 2f); // parametrize time
-    }
-
     private void StartFinishSequence()
     {
         _state = State.Transcending;
         _audioSource.Stop();
-        _audioSource.PlayOneShot(levelCompleteSound, myVolume);
+        _audioSource.PlayOneShot(levelCompleteSound, _myVolumeLevel);
+        successParticles.Play();
         Invoke(nameof(LoadNextLevel), 1f); // parametrize time
+    }
+
+    private void StartDeathSequence()
+    {
+        _state = State.Died;
+        _audioSource.Stop();
+        _audioSource.PlayOneShot(deathSound, _myVolumeLevel);
+        deathParticles.Play();
+        Invoke(nameof(LoadFirstLevel), 2f); // parametrize time
     }
 
     private void LoadNextLevel()
@@ -97,6 +106,8 @@ public class Rocket : MonoBehaviour
         else
         {
             _audioSource.Stop();
+            leftJetParticle.Stop();
+            rightJetParticle.Stop();
         }
     }
 
@@ -107,6 +118,8 @@ public class Rocket : MonoBehaviour
         {
             _audioSource.PlayOneShot(mainEngineSound);
         }
+        leftJetParticle.Play();
+        rightJetParticle.Play();
     }
 
     private void RespondToRotateInput()
@@ -117,11 +130,13 @@ public class Rocket : MonoBehaviour
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             transform.Rotate(Vector3.forward * rotationThisFrame);
+            rightJetParticle.Play();
         }
 
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             transform.Rotate(Vector3.back * rotationThisFrame);
+            leftJetParticle.Play();
         }
 
         _rigidbody.freezeRotation = false; // resume physics control of rotation 

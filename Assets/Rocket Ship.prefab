@@ -219,7 +219,7 @@ Transform:
   m_GameObject: {fileID: 3103508517050407517}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.55, z: 0}
-  m_LocalScale: {x: 1.6524, y: 1, z: 1}
+  m_LocalScale: {x: 1.6524, y: 1, z: 1.5949}
   m_Children:
   - {fileID: 6452414491357346742}
   - {fileID: 7062632344888914257}
@@ -271,7 +271,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 63bae4e368927485f8505080b48647f6, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 0.6
@@ -369,8 +369,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53ea48333360e468e961cfa48e4482e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rcsThrust: 200
+  rcsThrust: 100
   thrustThisFrame: 10
+  mainEngineSound: {fileID: 8300000, guid: 3b6f5dede5a9843ed88c88d8bff40cf4, type: 3}
+  deathSound: {fileID: 8300000, guid: 0669f1452384e4bd4b09396ba0301750, type: 3}
+  levelCompleteSound: {fileID: 8300000, guid: 35ad023cec63544079b7634d8dc271c5, type: 3}
 --- !u!1 &3256823543781770364
 GameObject:
   m_ObjectHideFlags: 0

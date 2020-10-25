@@ -6,16 +6,18 @@ public class Rocket : MonoBehaviour
 {
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] private float thrustThisFrame = 10f;
-    
+    [SerializeField] private float successLoadDelay = 1f;
+    [SerializeField] private float deathLoadDelay = 2f;
+
     [SerializeField] private AudioClip mainEngineSound;
     [SerializeField] private AudioClip deathSound;
-    [SerializeField] private AudioClip levelCompleteSound;    
-    
+    [SerializeField] private AudioClip levelCompleteSound;
+
     [SerializeField] private ParticleSystem leftJetParticle;
     [SerializeField] private ParticleSystem rightJetParticle;
     [SerializeField] private ParticleSystem deathParticles;
     [SerializeField] private ParticleSystem successParticles;
-    
+
     private static int _levelIndex = 3;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
@@ -64,7 +66,7 @@ public class Rocket : MonoBehaviour
         _audioSource.Stop();
         _audioSource.PlayOneShot(levelCompleteSound, _myVolumeLevel);
         successParticles.Play();
-        Invoke(nameof(LoadNextLevel), 1f); // parametrize time
+        Invoke(nameof(LoadNextLevel), successLoadDelay);
     }
 
     private void StartDeathSequence()
@@ -73,7 +75,7 @@ public class Rocket : MonoBehaviour
         _audioSource.Stop();
         _audioSource.PlayOneShot(deathSound, _myVolumeLevel);
         deathParticles.Play();
-        Invoke(nameof(ReLoadLevel), 2f); // parametrize time
+        Invoke(nameof(ReLoadLevel), deathLoadDelay);
     }
 
     private void LoadNextLevel()
@@ -117,6 +119,7 @@ public class Rocket : MonoBehaviour
         {
             _audioSource.PlayOneShot(mainEngineSound);
         }
+
         leftJetParticle.Play();
         rightJetParticle.Play();
     }

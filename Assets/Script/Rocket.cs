@@ -18,7 +18,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] private ParticleSystem deathParticles;
     [SerializeField] private ParticleSystem successParticles;
 
-    private static int _levelIndex = 5;
+    private static int _levelIndex;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     private readonly float _myVolumeLevel = 1.0f;

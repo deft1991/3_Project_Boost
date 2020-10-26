@@ -29,8 +29,8 @@ public class Oscillator : MonoBehaviour
 
         var cycles = Time.time / period; // continually from 0. if 0 / 2 = 0, 10/2 = 5 ect.
         var rawSinWave = Math.Sin(TAU * cycles); // goes from -1 to 1
-        // movementFactor = (float) (rawSinWave / 2f + 0.5f); // use if want to have direction from 0 to 1
-        _movementFactor = (float) (rawSinWave); // use if want to have direction from -1 to 1
+        _movementFactor = (float) (rawSinWave / 2f + 0.5f); // use if want to have direction from 0 to 1
+        // _movementFactor = (float) (rawSinWave); // use if want to have direction from -1 to 1
 
         Vector3 offset = movementVector * _movementFactor;
         transform.position = _startingPos + offset;

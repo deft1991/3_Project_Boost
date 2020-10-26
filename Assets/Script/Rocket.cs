@@ -22,6 +22,7 @@ public class Rocket : MonoBehaviour
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     private readonly float _myVolumeLevel = 1.0f;
+    private bool isCollisionEnabled = true;
 
     private enum State
     {
@@ -41,7 +42,7 @@ public class Rocket : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (State.Alive != _state)
+        if (State.Alive != _state || !isCollisionEnabled)
         {
             return; // ignore collisions when dead
         }
@@ -95,6 +96,24 @@ public class Rocket : MonoBehaviour
         {
             RespondToThrustInput();
             RespondToRotateInput();
+        }
+
+        if (Debug.isDebugBuild)
+        {
+            RespondToDebugKeys();
+        }
+    }
+
+    private void RespondToDebugKeys()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            isCollisionEnabled = !isCollisionEnabled; // toggle
         }
     }
 

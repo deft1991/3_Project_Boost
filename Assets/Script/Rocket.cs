@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
-    [SerializeField] float rcsThrust = 100f;
-    [SerializeField] private float thrustThisFrame = 10f;
+    [SerializeField] float rotateThrust = 100f;
+    [SerializeField] private float thrustThisFrame = 2000f;
     [SerializeField] private float successLoadDelay = 1f;
     [SerializeField] private float deathLoadDelay = 2f;
 
@@ -18,7 +18,7 @@ public class Rocket : MonoBehaviour
     [SerializeField] private ParticleSystem deathParticles;
     [SerializeField] private ParticleSystem successParticles;
 
-    private static int _levelIndex = 3;
+    private static int _levelIndex = 5;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     private readonly float _myVolumeLevel = 1.0f;
@@ -114,7 +114,7 @@ public class Rocket : MonoBehaviour
 
     private void ApplyThrust()
     {
-        _rigidbody.AddRelativeForce(Vector3.up * thrustThisFrame);
+        _rigidbody.AddRelativeForce(Vector3.up * (thrustThisFrame * Time.deltaTime));
         if (!_audioSource.isPlaying)
         {
             _audioSource.PlayOneShot(mainEngineSound);
@@ -127,7 +127,7 @@ public class Rocket : MonoBehaviour
     private void RespondToRotateInput()
     {
         _rigidbody.freezeRotation = true; // take manual control of rotation
-        float rotationThisFrame = Time.deltaTime * rcsThrust;
+        float rotationThisFrame = Time.deltaTime * rotateThrust;
 
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {

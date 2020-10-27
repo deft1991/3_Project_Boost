@@ -18,11 +18,11 @@ public class Rocket : MonoBehaviour
     [SerializeField] private ParticleSystem deathParticles;
     [SerializeField] private ParticleSystem successParticles;
 
-    private static int _levelIndex;
+    private int _levelIndex;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
     private readonly float _myVolumeLevel = 1.0f;
-    private bool isCollisionEnabled = true;
+    private bool _isCollisionEnabled = true;
 
     private enum State
     {
@@ -36,13 +36,14 @@ public class Rocket : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _levelIndex = SceneManager.GetActiveScene().buildIndex;
         _rigidbody = GetComponent<Rigidbody>();
         _audioSource = GetComponent<AudioSource>();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (State.Alive != _state || !isCollisionEnabled)
+        if (State.Alive != _state || !_isCollisionEnabled)
         {
             return; // ignore collisions when dead
         }
@@ -79,14 +80,22 @@ public class Rocket : MonoBehaviour
         Invoke(nameof(ReLoadLevel), deathLoadDelay);
     }
 
+    /**
+     * Go to the next level.
+     * If level max --> go to he first level
+     */
     private void LoadNextLevel()
     {
-        SceneManager.LoadScene(++_levelIndex);
+        var currentSceneIdx = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentSceneIdx == SceneManager.sceneCountInBuildSettings - 1 ? 0 : ++currentSceneIdx);
     }
 
+    /**
+     * Go to the level before till zero level
+     */
     private void ReLoadLevel()
     {
-        SceneManager.LoadScene(_levelIndex);
+        SceneManager.LoadScene(_levelIndex == 0 ? _levelIndex : --_levelIndex);
     }
 
     // Update is called once per frame
@@ -113,7 +122,7 @@ public class Rocket : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.C))
         {
-            isCollisionEnabled = !isCollisionEnabled; // toggle
+            _isCollisionEnabled = !_isCollisionEnabled; // toggle
         }
     }
 
@@ -125,9 +134,7 @@ public class Rocket : MonoBehaviour
         }
         else
         {
-            _audioSource.Stop();
-            leftJetParticle.Stop();
-            rightJetParticle.Stop();
+            StopApplyingThrust();
         }
     }
 
@@ -143,23 +150,33 @@ public class Rocket : MonoBehaviour
         rightJetParticle.Play();
     }
 
+    private void StopApplyingThrust()
+    {
+        _audioSource.Stop();
+        leftJetParticle.Stop();
+        rightJetParticle.Stop();
+    }
+
     private void RespondToRotateInput()
     {
-        _rigidbody.freezeRotation = true; // take manual control of rotation
         float rotationThisFrame = Time.deltaTime * rotateThrust;
 
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            transform.Rotate(Vector3.forward * rotationThisFrame);
-            rightJetParticle.Play();
+            RotateManually(rotationThisFrame);
         }
 
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            transform.Rotate(Vector3.back * rotationThisFrame);
-            leftJetParticle.Play();
+            RotateManually(-rotationThisFrame);
         }
+    }
 
+    private void RotateManually(float rotationThisFrame)
+    {
+        _rigidbody.freezeRotation = true; // take manual control of rotation
+        transform.Rotate(Vector3.forward * rotationThisFrame);
+        rightJetParticle.Play();
         _rigidbody.freezeRotation = false; // resume physics control of rotation 
     }
 }

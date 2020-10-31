@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Friendly
   - Fuel
+  - Easy Level
+  - Insane Level
+  - Hell Level
   layers:
   - Default
   - TransparentFX

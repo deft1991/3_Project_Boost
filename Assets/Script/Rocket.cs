@@ -21,8 +21,10 @@ public class Rocket : MonoBehaviour
     private int _levelIndex;
     private Rigidbody _rigidbody;
     private AudioSource _audioSource;
-    private readonly float _myVolumeLevel = 1.0f;
+    private State _state = State.Alive;
     private bool _isCollisionEnabled = true;
+    private readonly float _myVolumeLevel = 1.0f;
+    private static Difficulty _levelDifficulty = Difficulty.Easy;
 
     private enum State
     {
@@ -30,8 +32,12 @@ public class Rocket : MonoBehaviour
         Died,
         Transcending
     }
-
-    private State _state = State.Alive;
+    private enum Difficulty
+    {
+        Easy,
+        Insane,
+        Hell
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +61,18 @@ public class Rocket : MonoBehaviour
                 break;
             case "Finish":
                 StartFinishSequence();
+                break;            
+            case "Easy Level":
+                setLevelDifficulty(Difficulty.Easy);
+                StartFinishSequence();
+                break;            
+            case "Insane Level":
+                setLevelDifficulty(Difficulty.Insane);
+                StartFinishSequence();
+                break;            
+            case "Hell Level":
+                setLevelDifficulty(Difficulty.Hell);
+                StartFinishSequence();
                 break;
             default:
                 StartDeathSequence();
@@ -62,6 +80,10 @@ public class Rocket : MonoBehaviour
         }
     }
 
+    private void setLevelDifficulty(Difficulty difficulty)
+    {
+        _levelDifficulty = difficulty;
+    }
     private void StartFinishSequence()
     {
         _state = State.Transcending;
@@ -77,7 +99,7 @@ public class Rocket : MonoBehaviour
         _audioSource.Stop();
         _audioSource.PlayOneShot(deathSound, _myVolumeLevel);
         deathParticles.Play();
-        Invoke(nameof(ReLoadLevel), deathLoadDelay);
+        Invoke(nameof(LoadLevelAfterDie), deathLoadDelay);
     }
 
     /**
@@ -93,9 +115,23 @@ public class Rocket : MonoBehaviour
     /**
      * Go to the level before till zero level
      */
-    private void ReLoadLevel()
+    private void LoadLevelAfterDie()
     {
-        SceneManager.LoadScene(_levelIndex == 0 ? _levelIndex : --_levelIndex);
+        int sceneBuildIndex = _levelIndex;
+        switch (_levelDifficulty)
+        {
+            case Difficulty.Easy:
+                sceneBuildIndex = _levelIndex; // current level
+                break;
+            case Difficulty.Insane:
+                sceneBuildIndex = _levelIndex == 0 ? _levelIndex : --_levelIndex; // previous level
+                
+                break;
+            case Difficulty.Hell:
+                sceneBuildIndex = 1; // level where you can change difficulty 
+                break;
+        }
+        SceneManager.LoadScene(sceneBuildIndex);
     }
 
     // Update is called once per frame
